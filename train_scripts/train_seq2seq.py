@@ -1,11 +1,14 @@
 # coding:utf-8
 import tensorflow as tf
+#import os
 from make_dataset import *
 
+
+#os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 RAW_DIR = "/home/feng/code_exercise/dataset/raw_data/zhen/"
 SRC_TRAIN_DATA = RAW_DIR + "train.zh"
 TRG_TRAIN_DATA = RAW_DIR + "train.en"
-CHECKPOINT_PATH = "checkpoints/"
+CHECKPOINT_PATH = "../checkpoints/"
 HIDDEN_SIZE = 1024
 NUM_LAYERS = 2
 SRC_VOCAB_SIZE = 10000
@@ -87,7 +90,12 @@ def main():
 
     saver = tf.train.Saver()
     step = 0
-    with tf.Session() as sess:
+    config = tf.ConfigProto(log_device_placement = True)
+    #allow_soft_placement = True,
+    config.gpu_options.per_process_gpu_memory_fraction = 0.9
+    config.gpu_options.allow_growth = True
+    #with tf.device('/gpu:0'):
+    with tf.Session(config=config) as sess:
         tf.global_variables_initializer().run()
         for i in range(NUM_EPOCH):
             print("In iter: %d" % (i+1))
